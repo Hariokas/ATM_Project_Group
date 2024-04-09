@@ -1,4 +1,7 @@
 
+using ATMProjectGroup.Repositories.EF;
+using Microsoft.EntityFrameworkCore;
+
 namespace ATMProjectGroup
 {
     public class Program
@@ -13,6 +16,11 @@ namespace ATMProjectGroup
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddDbContext<AppDbContext>(options =>
+            {
+				options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+			});
 
             var app = builder.Build();
 
