@@ -1,4 +1,6 @@
-﻿namespace ATMProjectGroup.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ATMProjectGroup.Models;
 
 public class Transaction
 {

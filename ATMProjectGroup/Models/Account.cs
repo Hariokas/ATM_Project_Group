@@ -6,6 +6,7 @@ public class Account
 	public string AccountNumber { get; set; } = default!;
 	public decimal Balance { get; set; }
 	public Guid UserId { get; set; }
-	public virtual User User { get; set; }
-	public ICollection<Transaction> Transactions { get; set; } = default!;
+	public virtual User User { get; set; } = default!;
+	public virtual ICollection<Transaction> OutgoingTransactions { get; set; } = default!;
+	public virtual ICollection<Transaction> IncomingTransactions { get; set; } = default!;
 }
