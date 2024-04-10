@@ -1,13 +1,26 @@
 ﻿using ATMProjectGroup.Models;
+using ATMProjectGroup.Repositories.EF;
 using ATMProjectGroup.Repositories.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace ATMProjectGroup.Repositories;
 
 public class TransactionRepository : ITransactionRepository
 {
-    public Task<Transaction> AddTransactionAsync(Transaction transaction)
+    private readonly AppDbContext _context;
+
+    public TransactionRepository(AppDbContext context)
     {
-        throw new NotImplementedException();
+        _context = context;
+    }
+    public async Task AddTransactionAsync(Transaction transaction)
+    {
+        _context.Transactions.Add(transaction);
+        int savedChangesValue = await _context.SaveChangesAsync();
+        if (savedChangesValue <= 0)
+        {
+            throw new InvalidOperationException("Error saving changes to the database!");
+        }
     }
 
     public Task<Transaction> GetTransactionByIdAsync(Guid id)
