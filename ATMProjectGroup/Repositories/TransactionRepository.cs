@@ -1,37 +1,71 @@
 ﻿using ATMProjectGroup.Models;
+using ATMProjectGroup.Repositories.EF;
 using ATMProjectGroup.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace ATMProjectGroup.Repositories;
 
 public class TransactionRepository : ITransactionRepository
 {
-    public Task<Transaction> AddTransactionAsync(Transaction transaction)
+    private readonly AppDbContext _appDbContext;
+
+    public TransactionRepository(AppDbContext appDbContext)
     {
-        throw new NotImplementedException();
+        _appDbContext = appDbContext;
+    }
+    public async Task<Transaction> AddTransactionAsync(Transaction transaction)
+    {
+        _appDbContext.Transactions.Add(transaction);
+        await _appDbContext.SaveChangesAsync();
+        return transaction;
     }
 
-    public Task<Transaction> GetTransactionByIdAsync(Guid id)
+    public async Task<Transaction> GetTransactionByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        return await _appDbContext.Transactions.FirstOrDefaultAsync(t => t.Id == id);
+
     }
 
-    public Task<IEnumerable<Transaction>> GetTransactionsFromUser(Guid userId)
+    public async Task<IEnumerable<Transaction>> GetTransactionsFromUser(Guid userId)
     {
-        throw new NotImplementedException();
+        return await _appDbContext.Transactions
+            .Where(t => t.FromAccount.UserId == userId || t.ToAccount.UserId == userId)
+            .ToListAsync();
     }
 
-    public Task<IEnumerable<Transaction>> GetTransactionsFromAccount(Guid accountId)
+    public async Task<IEnumerable<Transaction>> GetTransactionsFromAccount(Guid accountId)
     {
-        throw new NotImplementedException();
+        return await _appDbContext.Transactions
+            .Where(t => t.FromAccountId == accountId || t.ToAccountId == accountId)
+            .ToListAsync();
     }
 
-    public Task<Transaction> UpdateTransactionAsync(Transaction transaction)
+    public async Task<Transaction> UpdateTransactionAsync(/*Guid id*/Transaction transaction) //shouldn't we state some ID to locate the object?
     {
-        throw new NotImplementedException();
+        var existingTransaction = _appDbContext.Transactions.FirstOrDefault(t => t.Id == transaction.Id /*==id*/);
+        //existingTransaction.Amount = transaction.Amount;
+        //existingTransaction.TransactionDate = transaction.TransactionDate;
+        //existingTransaction.Description = transaction.Description;
+        //existingTransaction.FromAccountId = transaction.FromAccountId;
+        //existingTransaction.FromAccount = transaction.FromAccount;
+        //existingTransaction.ToAccountId = transaction.ToAccountId;
+        //existingTransaction.ToAccount = transaction.ToAccount;
+        //existingTransaction.Type = transaction.Type;
+
+        _appDbContext.Transactions.Update(transaction);
+        await _appDbContext.SaveChangesAsync();
+        return transaction;
     }
 
-    public Task<Transaction> DeleteTransactionAsync(Guid id)
+    public async Task<Transaction> DeleteTransactionAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var transaction = await _appDbContext.Transactions.FindAsync(id);
+        if (transaction != null)
+        {
+            _appDbContext.Transactions.Remove(transaction);
+            await _appDbContext.SaveChangesAsync();
+        }
+        return transaction;
+
     }
 }
