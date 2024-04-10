@@ -1,34 +1,26 @@
 ﻿using ATMProjectGroup.Models;
 using ATMProjectGroup.Repositories.Interfaces;
 using ATMProjectGroup.Services.Interfaces;
-using System.Security.Principal;
 
 namespace ATMProjectGroup.Services;
 
-public class TransactionService : ITransactionService
+public class TransactionService(
+    ILogger<TransactionService> logger,
+    ITransactionRepository transactionRepository,
+    IBalanceService balanceService)
+    : ITransactionService
 {
-    private readonly ILogger<TransactionService> _logger;
-    private readonly ITransactionRepository _transactionRepository;
-    private readonly IBalanceService _balanceService;
-
-    public TransactionService(ILogger<TransactionService> logger, ITransactionRepository transactionRepository, IBalanceService balanceService)
-    {
-        _logger = logger;
-        _transactionRepository = transactionRepository;
-        _balanceService = balanceService;
-    }
-
     public async Task<Transaction> TransferMoney(Account sender, Account receiver, decimal amount)
     {
         try
         {
-            var senderAccountBalance = await _balanceService.HasEnoughMoneyAsync(sender, amount);
+            var senderAccountBalance = await balanceService.HasEnoughMoneyAsync(sender, amount);
             if (senderAccountBalance)
             {
                 sender.Balance -= amount;
                 receiver.Balance += amount;
 
-                var transaction = new Transaction()
+                var transaction = new Transaction
                 {
                     Amount = amount,
                     TransactionDate = DateTime.Now,
@@ -38,18 +30,18 @@ public class TransactionService : ITransactionService
                     ToAccountId = receiver.Id,
                     Type = TransactionType.Transfer
                 };
-                await _transactionRepository.AddTransactionAsync(transaction);
+                await transactionRepository.AddTransactionAsync(transaction);
 
                 return transaction;
             }
+
             return null;
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "An error occurred while transferring money!");
+            logger.LogError(e, "An error occurred while transferring money!");
             throw;
         }
-        
     }
 
     public async Task<Transaction> DepositMoney(Account account, decimal amount)
@@ -58,7 +50,7 @@ public class TransactionService : ITransactionService
         {
             account.Balance += amount;
 
-            var transaction = new Transaction()
+            var transaction = new Transaction
             {
                 Amount = amount,
                 TransactionDate = DateTime.Now,
@@ -66,27 +58,27 @@ public class TransactionService : ITransactionService
                 ToAccountId = account.Id,
                 Type = TransactionType.Deposit
             };
-            await _transactionRepository.AddTransactionAsync(transaction);
+            await transactionRepository.AddTransactionAsync(transaction);
 
             return transaction;
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "An error occurred while depositing money!");
+            logger.LogError(e, "An error occurred while depositing money!");
             throw;
         }
     }
-    
+
     public async Task<Transaction> WithdrawMoney(Account account, decimal amount)
     {
         try
         {
-            var accountBalance = await _balanceService.HasEnoughMoneyAsync(account, amount);
+            var accountBalance = await balanceService.HasEnoughMoneyAsync(account, amount);
             if (accountBalance)
             {
                 account.Balance -= amount;
 
-                var transaction = new Transaction()
+                var transaction = new Transaction
                 {
                     Amount = amount,
                     TransactionDate = DateTime.Now,
@@ -94,15 +86,16 @@ public class TransactionService : ITransactionService
                     FromAccountId = account.Id,
                     Type = TransactionType.Withdrawal
                 };
-                await _transactionRepository.AddTransactionAsync(transaction);
+                await transactionRepository.AddTransactionAsync(transaction);
 
                 return transaction;
             }
+
             return null;
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "An error occurred while withdrawing money!");
+            logger.LogError(e, "An error occurred while withdrawing money!");
             throw;
         }
     }

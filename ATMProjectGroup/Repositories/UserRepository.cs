@@ -6,16 +6,17 @@ using Serilog;
 
 namespace ATMProjectGroup.Repositories;
 
-public class UserRepository(AppDbContext db) : IUserRepository
+public class UserRepository(AppDbContext context) : IUserRepository
 {
-    public async Task<User> AddUserAsync(User user)
+    public async Task<User> AddUserAsync(UserDto userDto)
     {
-        ArgumentNullException.ThrowIfNull(user);
+        ArgumentNullException.ThrowIfNull(userDto);
 
         try
         {
-            db.Add(user);
-            await db.SaveChangesAsync();
+            var user = MapUserDtoToNewUser(userDto);
+            context.Add(user);
+            await context.SaveChangesAsync();
             return user;
         }
         catch (Exception e)
@@ -29,7 +30,7 @@ public class UserRepository(AppDbContext db) : IUserRepository
     {
         try
         {
-            return await db.Users.FirstOrDefaultAsync(u => u.Id == id) ??
+            return await context.Users.FirstOrDefaultAsync(u => u.Id == id) ??
                    throw new NullReferenceException($"[{nameof(GetUserByIdAsync)}]: User with GUID [{id}] not found!");
         }
         catch (Exception e)
@@ -41,14 +42,11 @@ public class UserRepository(AppDbContext db) : IUserRepository
 
     public async Task<User> GetUserByUsernameAsync(string username)
     {
-        if (string.IsNullOrWhiteSpace(username))
-        {
-            throw new ArgumentNullException(nameof(username));
-        }
+        if (string.IsNullOrWhiteSpace(username)) throw new ArgumentNullException(nameof(username));
 
         try
         {
-            return await db.Users.FirstOrDefaultAsync(u => u.Username == username) ??
+            return await context.Users.FirstOrDefaultAsync(u => u.Username == username) ??
                    throw new NullReferenceException(
                        $"[{nameof(GetUserByUsernameAsync)}]: User with username [{username}] not found!");
         }
@@ -63,7 +61,7 @@ public class UserRepository(AppDbContext db) : IUserRepository
     {
         try
         {
-            return await db.Users.ToListAsync();
+            return await context.Users.ToListAsync();
         }
         catch (Exception e)
         {
@@ -76,7 +74,7 @@ public class UserRepository(AppDbContext db) : IUserRepository
     {
         try
         {
-            return await db.Users.Skip(skip).Take(take).ToListAsync();
+            return await context.Users.Skip(skip).Take(take).ToListAsync();
         }
         catch (Exception e)
         {
@@ -85,14 +83,15 @@ public class UserRepository(AppDbContext db) : IUserRepository
         }
     }
 
-    public async Task<User> UpdateUserAsync(User user)
+    public async Task<User> UpdateUserAsync(UserDto userDto)
     {
-        ArgumentNullException.ThrowIfNull(user);
+        ArgumentNullException.ThrowIfNull(userDto);
 
         try
         {
-            db.Update(user);
-            await db.SaveChangesAsync();
+            var user = MapUserDtoToNewUser(userDto);
+            context.Update(user);
+            await context.SaveChangesAsync();
             return user;
         }
         catch (Exception e)
@@ -109,8 +108,8 @@ public class UserRepository(AppDbContext db) : IUserRepository
             var user = await GetUserByIdAsync(id);
             ArgumentNullException.ThrowIfNull(user);
 
-            db.Remove(user);
-            await db.SaveChangesAsync();
+            context.Remove(user);
+            await context.SaveChangesAsync();
             return user;
         }
         catch (Exception e)
@@ -118,5 +117,16 @@ public class UserRepository(AppDbContext db) : IUserRepository
             Log.Error($"[{nameof(DeleteUserAsync)}]: {e.Message}");
             throw;
         }
+    }
+
+    private User MapUserDtoToNewUser(UserDto userDto)
+    {
+        return new User
+        {
+            Id = userDto.Id,
+            Username = userDto.Username,
+            PasswordHash = userDto.PasswordHash,
+            Accounts = new List<Account>()
+        };
     }
 }

@@ -1,6 +1,8 @@
 using ATMProjectGroup.Repositories;
 using ATMProjectGroup.Repositories.EF;
 using ATMProjectGroup.Repositories.Interfaces;
+using ATMProjectGroup.Services;
+using ATMProjectGroup.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -21,14 +23,20 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-        builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
         builder.Services.AddDbContext<AppDbContext>(options =>
         {
             options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
         });
 
+        builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+        builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
         builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+        builder.Services.AddScoped<IBalanceService, BalanceService>();
+        builder.Services.AddScoped<ITransactionService, TransactionService>();
+        builder.Services.AddScoped<IUserService, UserService>();
+
         builder.Services.AddSerilog();
 
         var app = builder.Build();
