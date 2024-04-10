@@ -2,6 +2,7 @@ using ATMProjectGroup.Repositories;
 using ATMProjectGroup.Repositories.EF;
 using ATMProjectGroup.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace ATMProjectGroup;
 
@@ -12,11 +13,15 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console()
+            .CreateLogger();
 
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
         builder.Services.AddDbContext<AppDbContext>(options =>
         {
@@ -24,6 +29,7 @@ public class Program
         });
 
         builder.Services.AddScoped<IUserRepository, UserRepository>();
+        builder.Services.AddSerilog();
 
         var app = builder.Build();
 
