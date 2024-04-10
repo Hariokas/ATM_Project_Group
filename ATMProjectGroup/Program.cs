@@ -1,4 +1,6 @@
+using ATMProjectGroup.Repositories;
 using ATMProjectGroup.Repositories.EF;
+using ATMProjectGroup.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace ATMProjectGroup;
@@ -20,6 +22,8 @@ public class Program
         {
             options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
         });
+
+        builder.Services.AddScoped<IUserRepository, UserRepository>();
 
         var app = builder.Build();
 
