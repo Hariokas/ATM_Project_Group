@@ -1,4 +1,6 @@
+using ATMProjectGroup.Repositories;
 using ATMProjectGroup.Repositories.EF;
+using ATMProjectGroup.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -19,6 +21,7 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
         builder.Services.AddDbContext<AppDbContext>(options =>
         {

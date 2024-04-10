@@ -1,32 +1,49 @@
 ﻿using ATMProjectGroup.Models;
+using ATMProjectGroup.Repositories.EF;
 using ATMProjectGroup.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace ATMProjectGroup.Repositories;
 
 public class AccountRepository : IAccountRepository
 {
-    public Task<Account> AddAccountAsync(Account account)
+    private readonly AppDbContext _context;
+    public AccountRepository(AppDbContext context)
     {
-        throw new NotImplementedException();
+        _context = context;
+    }
+    public async Task<Account> AddAccountAsync(Account account)
+    {
+        _context.Accounts.Add(account);
+        await _context.SaveChangesAsync();
+        return account;
     }
 
-    public Task<Account> GetAccountByIdAsync(Guid id)
+    public async Task<Account> GetAccountByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        return await _context.Accounts.FindAsync(id);
+    }
+    public async Task<IEnumerable<Account>> GetAccountsFromUser(Guid userId)
+    {
+        return await _context.Accounts.Where(a => a.UserId == userId).ToListAsync();
     }
 
-    public Task<IEnumerable<Account>> GetAccountsFromUser(Guid userId)
+    public async Task<Account> UpdateAccountAsync(Account account)
     {
-        throw new NotImplementedException();
+        _context.Entry(account).State = EntityState.Modified;
+        await _context.SaveChangesAsync();
+        return account;
     }
 
-    public Task<Account> UpdateAccountAsync(Account account)
+    public async Task<Account> DeleteAccountAsync(Guid id)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task<Account> DeleteAccountAsync(Guid id)
-    {
-        throw new NotImplementedException();
+       var account = await _context.Accounts.FindAsync(id);
+       if (account != null)
+        {
+            return null;
+        }
+       _context.Accounts.Remove(account);
+        await _context.SaveChangesAsync();
+        return account;
     }
 }
