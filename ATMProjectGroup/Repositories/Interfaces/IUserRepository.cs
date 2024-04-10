@@ -1,6 +1,6 @@
 ﻿using ATMProjectGroup.Models;
 
-namespace ATMProjectGroup.Repositories;
+namespace ATMProjectGroup.Repositories.Interfaces;
 
 public interface IUserRepository
 {
