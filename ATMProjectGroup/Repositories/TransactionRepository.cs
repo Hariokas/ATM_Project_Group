@@ -1,13 +1,11 @@
 ﻿using ATMProjectGroup.Models;
-using ATMProjectGroup.Repositories.EF;
 using ATMProjectGroup.Repositories.Interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace ATMProjectGroup.Repositories;
 
 public class TransactionRepository : ITransactionRepository
 {
-    public async Task<Transaction> AddTransactionAsync(Transaction transaction)
+    public Task<Transaction> AddTransactionAsync(Transaction transaction)
     {
         throw new NotImplementedException();
     }
