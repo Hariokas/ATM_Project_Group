@@ -1,6 +1,5 @@
-﻿namespace ATMProjectGroup.Services
+﻿namespace ATMProjectGroup.Services;
+
+public class UserService
 {
-    public class UserService
-    {
-    }
 }

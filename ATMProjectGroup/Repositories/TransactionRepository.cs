@@ -5,44 +5,38 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ATMProjectGroup.Repositories;
 
-public class TransactionRepository : ITransactionRepository
+public class TransactionRepository(AppDbContext context) : ITransactionRepository
 {
-    private readonly AppDbContext _appDbContext;
-
-    public TransactionRepository(AppDbContext appDbContext)
-    {
-        _appDbContext = appDbContext;
-    }
     public async Task<Transaction> AddTransactionAsync(Transaction transaction)
     {
-        _appDbContext.Transactions.Add(transaction);
-        await _appDbContext.SaveChangesAsync();
+        context.Transactions.Add(transaction);
+        await context.SaveChangesAsync();
         return transaction;
     }
 
     public async Task<Transaction> GetTransactionByIdAsync(Guid id)
     {
-        return await _appDbContext.Transactions.FirstOrDefaultAsync(t => t.Id == id);
+        return await context.Transactions.FirstOrDefaultAsync(t => t.Id == id);
 
     }
 
     public async Task<IEnumerable<Transaction>> GetTransactionsFromUser(Guid userId)
     {
-        return await _appDbContext.Transactions
+        return await context.Transactions
             .Where(t => t.FromAccount.UserId == userId || t.ToAccount.UserId == userId)
             .ToListAsync();
     }
 
     public async Task<IEnumerable<Transaction>> GetTransactionsFromAccount(Guid accountId)
     {
-        return await _appDbContext.Transactions
+        return await context.Transactions
             .Where(t => t.FromAccountId == accountId || t.ToAccountId == accountId)
             .ToListAsync();
     }
 
     public async Task<Transaction> UpdateTransactionAsync(/*Guid id*/Transaction transaction) //shouldn't we state some ID to locate the object?
     {
-        var existingTransaction = _appDbContext.Transactions.FirstOrDefault(t => t.Id == transaction.Id /*==id*/);
+        var existingTransaction = context.Transactions.FirstOrDefault(t => t.Id == transaction.Id /*==id*/);
         //existingTransaction.Amount = transaction.Amount;
         //existingTransaction.TransactionDate = transaction.TransactionDate;
         //existingTransaction.Description = transaction.Description;
@@ -52,18 +46,18 @@ public class TransactionRepository : ITransactionRepository
         //existingTransaction.ToAccount = transaction.ToAccount;
         //existingTransaction.Type = transaction.Type;
 
-        _appDbContext.Transactions.Update(transaction);
-        await _appDbContext.SaveChangesAsync();
+        context.Transactions.Update(transaction);
+        await context.SaveChangesAsync();
         return transaction;
     }
 
     public async Task<Transaction> DeleteTransactionAsync(Guid id)
     {
-        var transaction = await _appDbContext.Transactions.FindAsync(id);
+        var transaction = await context.Transactions.FindAsync(id);
         if (transaction != null)
         {
-            _appDbContext.Transactions.Remove(transaction);
-            await _appDbContext.SaveChangesAsync();
+            context.Transactions.Remove(transaction);
+            await context.SaveChangesAsync();
         }
         return transaction;
 
