@@ -1,42 +1,31 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ATMProjectGroup.Models;
+using ATMProjectGroup.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace ATMProjectGroup.Controllers;
-
-[Route("api/[controller]")]
-[ApiController]
-public class TransactionController : ControllerBase
+namespace ATMProjectGroup.Controllers
 {
-    // GET: api/<TransactionController>
-    [HttpGet]
-    public IEnumerable<string> Get()
+    [Route("api/[controller]")]
+    [ApiController]
+    public class TransactionController(ITransactionService transactionService) : ControllerBase
     {
-        return new[] { "value1", "value2" };
-    }
+        [HttpPost]
+        public async Task<Transaction> TransferMoney(Account sender, Account receiver, decimal amount)
+        {
+            return await transactionService.TransferMoney(sender, receiver, amount);
+        }
 
-    // GET api/<TransactionController>/5
-    [HttpGet("{id}")]
-    public string Get(int id)
-    {
-        return "value";
-    }
+        [HttpPost]
+        public async Task<Transaction> DepositMoney(Account account, decimal amount)
+        {
+            return await transactionService.DepositMoney(account, amount);
+        }
 
-    // POST api/<TransactionController>
-    [HttpPost]
-    public void Post([FromBody] string value)
-    {
-    }
-
-    // PUT api/<TransactionController>/5
-    [HttpPut("{id}")]
-    public void Put(int id, [FromBody] string value)
-    {
-    }
-
-    // DELETE api/<TransactionController>/5
-    [HttpDelete("{id}")]
-    public void Delete(int id)
-    {
+        [HttpPost]
+        public async Task<Transaction> WithdrawMoney(Account account, decimal amount)
+        {
+            return await transactionService.WithdrawMoney(account, amount);
+        }
     }
 }
