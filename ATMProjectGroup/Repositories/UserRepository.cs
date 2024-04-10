@@ -20,7 +20,7 @@ public class UserRepository(AppDbContext db) : IUserRepository
         catch (Exception e)
         {
             //Log.Error($"[{nameof(AddUserAsync)}]: {e.Message}");
-            throw new Exception(e.Message);
+            throw;
         }
     }
 
@@ -34,32 +34,88 @@ public class UserRepository(AppDbContext db) : IUserRepository
         catch (Exception e)
         {
             //Log.Error($"[{nameof(GetUserByIdAsync)}]: {e.Message}");
-            throw new Exception(e.Message);
+            throw;
         }
     }
 
-    public Task<User> GetUserByUsernameAsync(string username)
+    public async Task<User> GetUserByUsernameAsync(string username)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            throw new ArgumentNullException(nameof(username));
+        }
+
+        try
+        {
+            return await db.Users.FirstOrDefaultAsync(u => u.Username == username) ??
+                   throw new NullReferenceException(
+                       $"[{nameof(GetUserByUsernameAsync)}]: User with username [{username}] not found!");
+        }
+        catch (Exception e)
+        {
+            //Log.Error($"[{nameof(GetUserByUsernameAsync)}]: {e.Message}");
+            throw;
+        }
     }
 
-    public Task<IEnumerable<User>> GetAllUsersAsync()
+    public async Task<IEnumerable<User>> GetAllUsersAsync()
     {
-        throw new NotImplementedException();
+        try
+        {
+            return await db.Users.ToListAsync();
+        }
+        catch (Exception e)
+        {
+            //Log.Error($"[{nameof(GetAllUsersAsync)}]: {e.Message}");
+            throw;
+        }
     }
 
-    public Task<IEnumerable<User>> GetUsers(int skip, int take)
+    public async Task<IEnumerable<User>> GetUsers(int skip, int take)
     {
-        throw new NotImplementedException();
+        try
+        {
+            return await db.Users.Skip(skip).Take(take).ToListAsync();
+        }
+        catch (Exception e)
+        {
+            //Log.Error($"[{nameof(GetUsers)}]: {e.Message}");
+            throw;
+        }
     }
 
-    public Task<User> UpdateUserAsync(User user)
+    public async Task<User> UpdateUserAsync(User user)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(user);
+
+        try
+        {
+            db.Update(user);
+            await db.SaveChangesAsync();
+            return user;
+        }
+        catch (Exception e)
+        {
+            //Log.Error($"[{nameof(UpdateUserAsync)}]: {e.Message}");
+            throw;
+        }
     }
 
-    public Task<User> DeleteUserAsync(Guid id)
+    public async Task<User> DeleteUserAsync(Guid id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var user = await GetUserByIdAsync(id);
+            ArgumentNullException.ThrowIfNull(user);
+
+            db.Remove(user);
+            await db.SaveChangesAsync();
+            return user;
+        }
+        catch (Exception e)
+        {
+            //Log.Error($"[{nameof(DeleteUserAsync)}]: {e.Message}");
+            throw;
+        }
     }
 }
