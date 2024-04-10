@@ -28,6 +28,7 @@ public class Program
             options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
         });
 
+        builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddSerilog();
 
         var app = builder.Build();
