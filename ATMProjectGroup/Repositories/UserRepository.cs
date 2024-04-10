@@ -2,6 +2,7 @@
 using ATMProjectGroup.Repositories.EF;
 using ATMProjectGroup.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace ATMProjectGroup.Repositories;
 
@@ -19,7 +20,7 @@ public class UserRepository(AppDbContext db) : IUserRepository
         }
         catch (Exception e)
         {
-            //Log.Error($"[{nameof(AddUserAsync)}]: {e.Message}");
+            Log.Error($"[{nameof(AddUserAsync)}]: {e.Message}");
             throw;
         }
     }
@@ -33,7 +34,7 @@ public class UserRepository(AppDbContext db) : IUserRepository
         }
         catch (Exception e)
         {
-            //Log.Error($"[{nameof(GetUserByIdAsync)}]: {e.Message}");
+            Log.Error($"[{nameof(GetUserByIdAsync)}]: {e.Message}");
             throw;
         }
     }
@@ -53,7 +54,7 @@ public class UserRepository(AppDbContext db) : IUserRepository
         }
         catch (Exception e)
         {
-            //Log.Error($"[{nameof(GetUserByUsernameAsync)}]: {e.Message}");
+            Log.Error($"[{nameof(GetUserByUsernameAsync)}]: {e.Message}");
             throw;
         }
     }
@@ -66,7 +67,7 @@ public class UserRepository(AppDbContext db) : IUserRepository
         }
         catch (Exception e)
         {
-            //Log.Error($"[{nameof(GetAllUsersAsync)}]: {e.Message}");
+            Log.Error($"[{nameof(GetAllUsersAsync)}]: {e.Message}");
             throw;
         }
     }
@@ -79,7 +80,7 @@ public class UserRepository(AppDbContext db) : IUserRepository
         }
         catch (Exception e)
         {
-            //Log.Error($"[{nameof(GetUsers)}]: {e.Message}");
+            Log.Error($"[{nameof(GetUsers)}]: {e.Message}");
             throw;
         }
     }
@@ -96,7 +97,7 @@ public class UserRepository(AppDbContext db) : IUserRepository
         }
         catch (Exception e)
         {
-            //Log.Error($"[{nameof(UpdateUserAsync)}]: {e.Message}");
+            Log.Error($"[{nameof(UpdateUserAsync)}]: {e.Message}");
             throw;
         }
     }
@@ -114,7 +115,7 @@ public class UserRepository(AppDbContext db) : IUserRepository
         }
         catch (Exception e)
         {
-            //Log.Error($"[{nameof(DeleteUserAsync)}]: {e.Message}");
+            Log.Error($"[{nameof(DeleteUserAsync)}]: {e.Message}");
             throw;
         }
     }
