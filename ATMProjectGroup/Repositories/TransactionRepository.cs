@@ -7,7 +7,7 @@ namespace ATMProjectGroup.Repositories;
 
 public class TransactionRepository : ITransactionRepository
 {
-    public async Task AddTransactionAsync(Transaction transaction)
+    public async Task<Transaction> AddTransactionAsync(Transaction transaction)
     {
         throw new NotImplementedException();
     }
