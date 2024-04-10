@@ -38,6 +38,7 @@ public class TransactionService : ITransactionService
                     ToAccountId = receiver.Id,
                     Type = TransactionType.Transfer
                 };
+                await _transactionRepository.AddTransactionAsync(transaction);
 
                 return transaction;
             }
