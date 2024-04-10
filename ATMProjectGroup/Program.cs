@@ -1,3 +1,4 @@
+using ATMProjectGroup.Repositories;
 using ATMProjectGroup.Repositories.EF;
 using ATMProjectGroup.Repositories.Interfaces;
 using ATMProjectGroup.Services;
@@ -13,11 +14,15 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console()
+            .CreateLogger();
 
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        builder.Services.AddScoped<IAccountRepository, AccountRepository>();
         builder.Services.AddScoped<ITransactionService, TransactionService>();
         builder.Services.AddScoped<ITransactionRepository, ITransactionRepository>();
 

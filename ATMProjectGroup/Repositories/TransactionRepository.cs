@@ -7,20 +7,9 @@ namespace ATMProjectGroup.Repositories;
 
 public class TransactionRepository : ITransactionRepository
 {
-    private readonly AppDbContext _context;
-
-    public TransactionRepository(AppDbContext context)
-    {
-        _context = context;
-    }
     public async Task AddTransactionAsync(Transaction transaction)
     {
-        _context.Transactions.Add(transaction);
-        int savedChangesValue = await _context.SaveChangesAsync();
-        if (savedChangesValue <= 0)
-        {
-            throw new InvalidOperationException("Error saving changes to the database!");
-        }
+        throw new NotImplementedException();
     }
 
     public Task<Transaction> GetTransactionByIdAsync(Guid id)
