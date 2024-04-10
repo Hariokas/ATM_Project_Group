@@ -27,14 +27,14 @@ public class UserController(IUserService userService) : ControllerBase
 
     // POST api/<AccountController>
     [HttpPost]
-    public void Post([FromBody] User user)
+    public void Post([FromBody] UserDto user)
     {
         userService.AddUserAsync(user);
     }
 
     // PUT api/<AccountController>/5
     [HttpPut("{id}")]
-    public void Put(Guid id, [FromBody] User user)
+    public void Put(Guid id, [FromBody] UserDto user)
     {
         userService.UpdateUserAsync(user);
     }

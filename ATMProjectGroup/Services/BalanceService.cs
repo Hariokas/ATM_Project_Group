@@ -4,23 +4,14 @@ using ATMProjectGroup.Services.Interfaces;
 
 namespace ATMProjectGroup.Services;
 
-public class BalanceService : IBalanceService
+public class BalanceService(IAccountRepository accountRepository) : IBalanceService
 {
-    private readonly IAccountRepository _accountRepository;
-
-    public BalanceService(IAccountRepository accountRepository)
-    {
-        _accountRepository = accountRepository;
-    }
     public async Task<decimal> GetBalanceAsync(Account account)
     {
         if (account == null) throw new ArgumentNullException(nameof(account));
-                
-        var retrievedAccount = await _accountRepository.GetAccountByIdAsync(account.Id);
-        if (retrievedAccount == null)
-        {
-            throw new KeyNotFoundException($"No account found with ID {account.Id}");
-        }
+
+        var retrievedAccount = await accountRepository.GetAccountByIdAsync(account.Id);
+        if (retrievedAccount == null) throw new KeyNotFoundException($"No account found with ID {account.Id}");
 
         return retrievedAccount.Balance;
         //throw new NotImplementedException();

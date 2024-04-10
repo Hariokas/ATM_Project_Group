@@ -17,7 +17,6 @@ public class TransactionRepository(AppDbContext context) : ITransactionRepositor
     public async Task<Transaction> GetTransactionByIdAsync(Guid id)
     {
         return await context.Transactions.FirstOrDefaultAsync(t => t.Id == id);
-
     }
 
     public async Task<IEnumerable<Transaction>> GetTransactionsFromUser(Guid userId)
@@ -34,7 +33,8 @@ public class TransactionRepository(AppDbContext context) : ITransactionRepositor
             .ToListAsync();
     }
 
-    public async Task<Transaction> UpdateTransactionAsync(/*Guid id*/Transaction transaction) //shouldn't we state some ID to locate the object?
+    public async Task<Transaction>
+        UpdateTransactionAsync( /*Guid id*/ Transaction transaction) //shouldn't we state some ID to locate the object?
     {
         var existingTransaction = context.Transactions.FirstOrDefault(t => t.Id == transaction.Id /*==id*/);
         //existingTransaction.Amount = transaction.Amount;
@@ -59,7 +59,7 @@ public class TransactionRepository(AppDbContext context) : ITransactionRepositor
             context.Transactions.Remove(transaction);
             await context.SaveChangesAsync();
         }
-        return transaction;
 
+        return transaction;
     }
 }
