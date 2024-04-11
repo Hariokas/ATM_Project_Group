@@ -18,42 +18,40 @@ public class TransactionService(
             var sender = await accountRepository.GetAccountByIdAsync(senderAccountId);
             var receiver = await accountRepository.GetAccountByIdAsync(receiverAccountId);
 
-            if (sender == null || receiver == null)
-                throw new ArgumentException("One of the accounts is not found.");
+            ArgumentNullException.ThrowIfNull(sender);
+            ArgumentNullException.ThrowIfNull(receiver);
 
             var senderAccountBalance = await balanceService.HasEnoughMoneyAsync(sender, amount);
-            if (senderAccountBalance)
+            if (!senderAccountBalance) throw new InvalidOperationException("Insufficient funds for the transfer.");
+
+            sender.Balance -= amount;
+            receiver.Balance += amount;
+
+            await accountRepository.UpdateAccountAsync(sender);
+            await accountRepository.UpdateAccountAsync(receiver);
+
+            var transaction = new Transaction
             {
-                sender.Balance -= amount;
-                receiver.Balance += amount;
+                Amount = amount,
+                TransactionDate = DateTime.UtcNow,
+                FromAccountId = sender.Id,
+                ToAccountId = receiver.Id,
+                Type = TransactionType.Transfer,
+                Description = "Transfer from account " + sender.AccountNumber + " to account " +
+                              receiver.AccountNumber
+            };
 
-                await accountRepository.UpdateAccountAsync(sender);
-                await accountRepository.UpdateAccountAsync(receiver);
+            await transactionRepository.AddTransactionAsync(transaction);
 
-                var transaction = new Transaction
-                {
-                    Amount = amount,
-                    TransactionDate = DateTime.UtcNow,
-                    FromAccountId = sender.Id,
-                    ToAccountId = receiver.Id,
-                    Type = TransactionType.Transfer,
-                    Description = "Transfer from account " + sender.AccountNumber + " to account " +
-                                  receiver.AccountNumber
-                };
+            return new TransactionResultDto
+            {
+                Id = transaction.Id,
+                Amount = transaction.Amount,
+                TransactionDate = transaction.TransactionDate,
+                Description = transaction.Description,
+                Type = transaction.Type
+            };
 
-                await transactionRepository.AddTransactionAsync(transaction);
-
-                return new TransactionResultDto
-                {
-                    Id = transaction.Id,
-                    Amount = transaction.Amount,
-                    TransactionDate = transaction.TransactionDate,
-                    Description = transaction.Description,
-                    Type = transaction.Type
-                };
-            }
-
-            throw new InvalidOperationException("Insufficient funds for the transfer.");
         }
         catch (Exception e)
         {
@@ -67,8 +65,7 @@ public class TransactionService(
         try
         {
             var account = await accountRepository.GetAccountByIdAsync(accountId);
-            if (account == null)
-                throw new ArgumentException("Account not found.");
+            ArgumentNullException.ThrowIfNull(account);
 
             account.Balance += amount;
             await accountRepository.UpdateAccountAsync(account);
@@ -103,8 +100,7 @@ public class TransactionService(
         try
         {
             var account = await accountRepository.GetAccountByIdAsync(accountId);
-            if (account == null)
-                throw new ArgumentException("Account not found.");
+            ArgumentNullException.ThrowIfNull(account);
 
             var accountBalance = await balanceService.HasEnoughMoneyAsync(account, amount);
             if (!accountBalance)

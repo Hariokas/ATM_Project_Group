@@ -8,7 +8,7 @@ public class BalanceService(IAccountRepository accountRepository) : IBalanceServ
 {
     public async Task<decimal> GetBalanceAsync(Account account)
     {
-        if (account == null) throw new ArgumentNullException(nameof(account));
+        ArgumentNullException.ThrowIfNull(account);
 
         var retrievedAccount = await accountRepository.GetAccountByIdAsync(account.Id);
         if (retrievedAccount == null) throw new KeyNotFoundException($"No account found with ID {account.Id}");
@@ -19,7 +19,8 @@ public class BalanceService(IAccountRepository accountRepository) : IBalanceServ
 
     public async Task<bool> HasEnoughMoneyAsync(Account account, decimal amount)
     {
-        if (account == null) throw new ArgumentNullException(nameof(account));
+        ArgumentNullException.ThrowIfNull(account);
+
         if (amount < 0) throw new ArgumentOutOfRangeException(nameof(amount), "Amount must be non-negative.");
 
         var currentBalance = await GetBalanceAsync(account);

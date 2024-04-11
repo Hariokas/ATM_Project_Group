@@ -18,33 +18,33 @@ public class AccountController : ControllerBase
         _accountService = accountService;
     }
 
-    [HttpPost]
+    [HttpPost("AddAccount")]
     public async Task<ActionResult<Account>> Post([FromBody] Account account)
     {
         return await _accountService.AddAccountAsync(account);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("GetAccountById")]
     public async Task<ActionResult<Account>> GetAccountById(Guid id)
     {
         return await _accountService.GetAccountByIdAsync(id);
     }
 
 
-    [HttpGet("{id}")]
+    [HttpGet("GetAccountsFromUserByGuid")]
     public async Task<IEnumerable<Account>> GetAccountsFromUser(Guid userId)
     {
         return await _accountService.GetAccountsFromUser(userId);
     }
 
 
-    [HttpPut("{id}")]
+    [HttpPut("UpdateAccount")]
     public async Task<ActionResult<Account>> Put(Guid id, [FromBody] Account account)
     {
         return await _accountService.UpdateAccountAsync(account);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("DeleteAccountByGuid")]
     public async Task<ActionResult<Account>> Delete(Guid id)
     {
         return await _accountService.DeleteAccountAsync(id);
