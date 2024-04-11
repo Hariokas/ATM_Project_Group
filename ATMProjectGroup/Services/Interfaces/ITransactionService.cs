@@ -4,7 +4,7 @@ namespace ATMProjectGroup.Services.Interfaces;
 
 public interface ITransactionService
 {
-    Task<Transaction> TransferMoney(Account sender, Account receiver, decimal amount);
-    Task<Transaction> DepositMoney(Account account, decimal amount);
-    Task<Transaction> WithdrawMoney(Account account, decimal amount);
+    Task<TransactionResultDto> TransferMoney(Guid senderAccountId, Guid receiverAccountId, decimal amount);
+    Task<TransactionResultDto> DepositMoney(Guid accountId, decimal amount);
+    Task<TransactionResultDto> WithdrawMoney(Guid accountId, decimal amount);
 }
