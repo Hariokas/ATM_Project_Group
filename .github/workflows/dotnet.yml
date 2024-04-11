@@ -2,7 +2,9 @@ name: ATM CI/CD Pipeline
 
 on:
   push:
-    branches: [ "master", "dev" ]
+    branches: [ "dev" ]
+  pull_request:
+    branches: [ "master" ]
 
 jobs:
   build:
