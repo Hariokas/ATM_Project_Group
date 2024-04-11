@@ -11,21 +11,28 @@ namespace ATMProjectGroup.Controllers
     public class TransactionController(ITransactionService transactionService) : ControllerBase
     {
         [HttpPost("TransferMoney")]
-        public async Task<Transaction> TransferMoney(TransferMoneyRequest request)
+        public async Task<ActionResult<TransactionResultDto>> TransferMoney([FromBody] TransferMoneyRequest request)
         {
-            return await transactionService.TransferMoney(request.Sender, request.Receiver, request.Amount);
+            var result = await transactionService.TransferMoney(request.SenderAccountId, request.ReceiverAccountId, request.Amount);
+            if (result == null) return BadRequest("Transfer failed.");
+            return Ok(result);
         }
 
         [HttpPost("DepositMoney")]
-        public async Task<Transaction> DepositMoney([FromBody] Account account, decimal amount)
+        public async Task<ActionResult<TransactionResultDto>> DepositMoney([FromBody] DepositWithdrawRequest request)
         {
-            return await transactionService.DepositMoney(account, amount);
+            var result = await transactionService.DepositMoney(request.AccountId, request.Amount);
+            if (result == null) return BadRequest("Deposit failed.");
+            return Ok(result);
         }
 
         [HttpPost("WithdrawMoney")]
-        public async Task<Transaction> WithdrawMoney([FromBody] Account account, decimal amount)
+        public async Task<ActionResult<TransactionResultDto>> WithdrawMoney([FromBody] DepositWithdrawRequest request)
         {
-            return await transactionService.WithdrawMoney(account, amount);
+            var result = await transactionService.WithdrawMoney(request.AccountId, request.Amount);
+            if (result == null) return BadRequest("Withdrawal failed.");
+            return Ok(result);
         }
+
     }
 }

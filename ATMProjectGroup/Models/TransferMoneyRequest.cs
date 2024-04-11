@@ -2,7 +2,7 @@
 
 public class TransferMoneyRequest
 {
-    public Account Sender { get; set; } = new Account();
-    public Account Receiver { get; set; } = new Account();
+    public Guid SenderAccountId { get; set; } = default!;
+    public Guid ReceiverAccountId { get; set; } = default!;
     public decimal Amount { get; set; } = 0;
 }

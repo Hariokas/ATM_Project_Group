@@ -17,7 +17,7 @@ public class AccountRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var accountRepository = new AccountRepository();
+			var accountRepository = new AccountRepository(context);
 			var account = new Account
 			{
 				Id = Guid.NewGuid(),
@@ -47,7 +47,7 @@ public class AccountRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var accountRepository = new AccountRepository();
+			var accountRepository = new AccountRepository(context);
 
 			// Act
 			async Task AddAccountAsync() => await accountRepository.AddAccountAsync(null!);
@@ -67,7 +67,7 @@ public class AccountRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var accountRepository = new AccountRepository();
+			var accountRepository = new AccountRepository(context);
 			var account = new Account
 			{
 				Id = Guid.NewGuid(),
@@ -99,7 +99,7 @@ public class AccountRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var accountRepository = new AccountRepository();
+			var accountRepository = new AccountRepository(context);
 
 			// Act
 			var result = await accountRepository.GetAccountByIdAsync(Guid.NewGuid());
@@ -119,7 +119,7 @@ public class AccountRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var accountRepository = new AccountRepository();
+			var accountRepository = new AccountRepository(context);
 			var userId = Guid.NewGuid();
 			var account1 = new Account
 			{
@@ -158,7 +158,7 @@ public class AccountRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var accountRepository = new AccountRepository();
+			var accountRepository = new AccountRepository(context);
 
 			// Act
 			var result = await accountRepository.GetAccountsFromUser(Guid.NewGuid());
@@ -179,7 +179,7 @@ public class AccountRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var accountRepository = new AccountRepository();
+			var accountRepository = new AccountRepository(context);
 			var account = new Account
 			{
 				Id = Guid.NewGuid(),
@@ -213,7 +213,7 @@ public class AccountRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var accountRepository = new AccountRepository();
+			var accountRepository = new AccountRepository(context);
 			var account = new Account
 			{
 				Id = Guid.NewGuid(),
@@ -240,7 +240,7 @@ public class AccountRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var accountRepository = new AccountRepository();
+			var accountRepository = new AccountRepository(context);
 			var account = new Account
 			{
 				Id = Guid.NewGuid(),
@@ -272,7 +272,7 @@ public class AccountRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var accountRepository = new AccountRepository();
+			var accountRepository = new AccountRepository(context);
 
 			// Act
 			var result = await accountRepository.DeleteAccountAsync(Guid.NewGuid());
