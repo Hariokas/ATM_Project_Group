@@ -17,7 +17,7 @@ public class TransactionRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var transactionRepository = new TransactionRepository();
+			var transactionRepository = new TransactionRepository(context);
 			var transaction = new Transaction
 			{
 				Id = Guid.NewGuid(),	
@@ -50,7 +50,7 @@ public class TransactionRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var transactionRepository = new TransactionRepository();
+			var transactionRepository = new TransactionRepository(context);
 
 			// Act
 			async Task AddTransactionAsync() => await transactionRepository.AddTransactionAsync(null!);
@@ -70,7 +70,7 @@ public class TransactionRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var transactionRepository = new TransactionRepository();
+			var transactionRepository = new TransactionRepository(context);
 			var transaction = new Transaction
 			{
 				Id = Guid.NewGuid(),
@@ -104,7 +104,7 @@ public class TransactionRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var transactionRepository = new TransactionRepository();
+			var transactionRepository = new TransactionRepository(context);
 
 			// Act
 			var result = await transactionRepository.GetTransactionByIdAsync(Guid.NewGuid());
@@ -124,50 +124,53 @@ public class TransactionRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var transactionRepository = new TransactionRepository();
-			var userRepository = new UserRepository();
+			var transactionRepository = new TransactionRepository(context);
+			var userRepository = new UserRepository(context);
+			var accountRepository = new AccountRepository(context);
 			var userId = Guid.NewGuid();
-			var user = new User
+			var user = new UserDto
 			{
 				Id = userId,
-				Accounts = new List<Account>
+				Username = "test",
+				PasswordHash = "test",
+			};
+
+			var account = new Account() 
+			{
+				Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
+				UserId = userId,
+				Balance = 1000,
+				AccountNumber = "1234567890",
+				OutgoingTransactions = new List<Transaction>()
 				{
-					new() {
-						Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
-						UserId = userId,
-						Balance = 1000,
-						AccountNumber = "1234567890",
-						OutgoingTransactions = new List<Transaction>()
-						{
-							new()
-							{
-								Id = Guid.NewGuid(),
-								FromAccountId = Guid.Parse("00000000-0000-0000-0000-000000000001"),
-								ToAccountId = Guid.NewGuid(),
-								Amount = 1000,
-								Type = TransactionType.Transfer,
-							},
-							new()
-							{
-								Id = Guid.NewGuid(),
-								FromAccountId = Guid.Parse("00000000-0000-0000-0000-000000000001"),
-								ToAccountId = Guid.NewGuid(),
-								Amount = 10,
-								Type = TransactionType.Transfer,
-							}
-						}
+					new()
+					{
+						Id = Guid.NewGuid(),
+						FromAccountId = Guid.Parse("00000000-0000-0000-0000-000000000001"),
+						ToAccountId = Guid.NewGuid(),
+						Amount = 1000,
+						Type = TransactionType.Transfer,
+					},
+					new()
+					{
+						Id = Guid.NewGuid(),
+						FromAccountId = Guid.Parse("00000000-0000-0000-0000-000000000001"),
+						ToAccountId = Guid.NewGuid(),
+						Amount = 10,
+						Type = TransactionType.Transfer,
 					}
 				}
 			};
 
 			await userRepository.AddUserAsync(user);
+			await accountRepository.AddAccountAsync(account);
 
 			// Act
 			var result = await transactionRepository.GetTransactionsFromUser(userId);
 
 			// Assert
 			Assert.NotNull(result);
-			Assert.Equal(user.Accounts.SelectMany(a => a.OutgoingTransactions).Count(), result.Count());
+			Assert.Equal(account.OutgoingTransactions.Count, result.Count());
 		}
 	}
 
@@ -181,7 +184,7 @@ public class TransactionRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var transactionRepository = new TransactionRepository();
+			var transactionRepository = new TransactionRepository(context);
 
 			// Act
 			var result = await transactionRepository.GetTransactionsFromUser(Guid.NewGuid());
@@ -201,8 +204,8 @@ public class TransactionRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var transactionRepository = new TransactionRepository();
-			var accountRepository = new AccountRepository();
+			var transactionRepository = new TransactionRepository(context);
+			var accountRepository = new AccountRepository(context);
 			var accountId = Guid.NewGuid();
 			var account = new Account
 			{
@@ -252,7 +255,7 @@ public class TransactionRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var transactionRepository = new TransactionRepository();
+			var transactionRepository = new TransactionRepository(context);
 
 			// Act
 			var result = await transactionRepository.GetTransactionsFromAccount(Guid.NewGuid());
@@ -272,7 +275,7 @@ public class TransactionRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var transactionRepository = new TransactionRepository();
+			var transactionRepository = new TransactionRepository(context);
 			var transaction = new Transaction
 			{
 				Id = Guid.NewGuid(),
@@ -309,7 +312,7 @@ public class TransactionRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var transactionRepository = new TransactionRepository();
+			var transactionRepository = new TransactionRepository(context);
 			var transaction = new Transaction
 			{
 				Id = Guid.NewGuid(),
@@ -337,7 +340,7 @@ public class TransactionRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var transactionRepository = new TransactionRepository();
+			var transactionRepository = new TransactionRepository(context);
 			var transaction = new Transaction
 			{
 				Id = Guid.NewGuid(),
@@ -372,7 +375,7 @@ public class TransactionRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var transactionRepository = new TransactionRepository();
+			var transactionRepository = new TransactionRepository(context);
 
 			// Act
 			var result = await transactionRepository.DeleteTransactionAsync(Guid.NewGuid());
