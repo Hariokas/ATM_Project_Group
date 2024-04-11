@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ATMProjectGroup.Models;
+using ATMProjectGroup.Services;
+using ATMProjectGroup.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,35 +11,44 @@ namespace ATMProjectGroup.Controllers;
 [ApiController]
 public class AccountController : ControllerBase
 {
-    // GET: api/<AccountController>
-    [HttpGet]
-    public IEnumerable<string> Get()
+    private readonly IAccountService _accountService;
+
+    public AccountController(IAccountService accountService)
     {
-        return new[] { "value1", "value2" };
+        _accountService = accountService;
     }
 
-    // GET api/<AccountController>/5
-    [HttpGet("{id}")]
-    public string Get(int id)
-    {
-        return "value";
-    }
-
-    // POST api/<AccountController>
     [HttpPost]
-    public void Post([FromBody] string value)
+    public async Task<ActionResult<Account>> Post([FromBody] Account account)
     {
+        return await _accountService.AddAccountAsync(account);
     }
 
-    // PUT api/<AccountController>/5
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Account>> GetAccountById(Guid id)
+    {
+        return await _accountService.GetAccountByIdAsync(id);
+    }
+
+
+    [HttpGet("{id}")]
+    public async Task<IEnumerable<Account>> GetAccountsFromUser(Guid userId)
+    {
+        return await _accountService.GetAccountsFromUser(userId);
+    }
+
+
     [HttpPut("{id}")]
-    public void Put(int id, [FromBody] string value)
+    public async Task<ActionResult<Account>> Put(Guid id, [FromBody] Account account)
     {
+        return await _accountService.UpdateAccountAsync(account);
     }
 
-    // DELETE api/<AccountController>/5
     [HttpDelete("{id}")]
-    public void Delete(int id)
+    public async Task<ActionResult<Account>> Delete(Guid id)
     {
+        return await _accountService.DeleteAccountAsync(id);
     }
+
+
 }
