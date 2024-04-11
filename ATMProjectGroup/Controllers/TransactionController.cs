@@ -10,20 +10,20 @@ namespace ATMProjectGroup.Controllers
     [ApiController]
     public class TransactionController(ITransactionService transactionService) : ControllerBase
     {
-        [HttpPost]
-        public async Task<Transaction> TransferMoney(Account sender, Account receiver, decimal amount)
+        [HttpPost("TransferMoney")]
+        public async Task<Transaction> TransferMoney(TransferMoneyRequest request)
         {
-            return await transactionService.TransferMoney(sender, receiver, amount);
+            return await transactionService.TransferMoney(request.Sender, request.Receiver, request.Amount);
         }
 
-        [HttpPost]
-        public async Task<Transaction> DepositMoney(Account account, decimal amount)
+        [HttpPost("DepositMoney")]
+        public async Task<Transaction> DepositMoney([FromBody] Account account, decimal amount)
         {
             return await transactionService.DepositMoney(account, amount);
         }
 
-        [HttpPost]
-        public async Task<Transaction> WithdrawMoney(Account account, decimal amount)
+        [HttpPost("WithdrawMoney")]
+        public async Task<Transaction> WithdrawMoney([FromBody] Account account, decimal amount)
         {
             return await transactionService.WithdrawMoney(account, amount);
         }
