@@ -17,8 +17,8 @@ public class UserRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var userRepository = new UserRepository();
-			var user = new User
+			var userRepository = new UserRepository(context);
+			var user = new UserDto
 			{
 				Id = Guid.NewGuid(),
 				Username = "test",
@@ -45,7 +45,7 @@ public class UserRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var userRepository = new UserRepository();
+			var userRepository = new UserRepository(context);
 
 			// Act
 			async Task AddUserAsync() => await userRepository.AddUserAsync(null!);
@@ -65,8 +65,8 @@ public class UserRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var userRepository = new UserRepository();
-			var user = new User
+			var userRepository = new UserRepository(context);
+			var user = new UserDto
 			{
 				Id = Guid.NewGuid(),
 				Username = "test",
@@ -76,7 +76,7 @@ public class UserRepositoryTests
 			await userRepository.AddUserAsync(user);
 
 			// Act
-			var result = await userRepository.GetUserByIdAsync(0);
+			var result = await userRepository.GetUserByIdAsync(user.Id);
 
 			// Assert
 			Assert.NotNull(result);
@@ -96,10 +96,10 @@ public class UserRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var userRepository = new UserRepository();
+			var userRepository = new UserRepository(context);
 
 			// Act
-			var result = await userRepository.GetUserByIdAsync(0);
+			var result = await userRepository.GetUserByIdAsync(Guid.NewGuid());
 
 			// Assert
 			Assert.Null(result);
@@ -116,8 +116,8 @@ public class UserRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var userRepository = new UserRepository();
-			var user = new User
+			var userRepository = new UserRepository(context);
+			var user = new UserDto
 			{
 				Id = Guid.NewGuid(),
 				Username = "test",
@@ -147,7 +147,7 @@ public class UserRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var userRepository = new UserRepository();
+			var userRepository = new UserRepository(context);
 
 			// Act
 			var result = await userRepository.GetUserByUsernameAsync("test");
@@ -167,14 +167,14 @@ public class UserRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var userRepository = new UserRepository();
-			var user1 = new User
+			var userRepository = new UserRepository(context);
+			var user1 = new UserDto
 			{
 				Id = Guid.NewGuid(),
 				Username = "test1",
 				PasswordHash = "test1"
 			};
-			var user2 = new User
+			var user2 = new UserDto
 			{
 				Id = Guid.NewGuid(),
 				Username = "test2",
@@ -205,7 +205,7 @@ public class UserRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var userRepository = new UserRepository();
+			var userRepository = new UserRepository(context);
 
 			// Act
 			var result = await userRepository.GetAllUsersAsync();
@@ -226,14 +226,14 @@ public class UserRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var userRepository = new UserRepository();
-			var user1 = new User
+			var userRepository = new UserRepository(context);
+			var user1 = new UserDto
 			{
 				Id = Guid.NewGuid(),
 				Username = "test1",
 				PasswordHash = "test1"
 			};
-			var user2 = new User
+			var user2 = new UserDto
 			{
 				Id = Guid.NewGuid(),
 				Username = "test2",
@@ -264,7 +264,7 @@ public class UserRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var userRepository = new UserRepository();
+			var userRepository = new UserRepository(context);
 
 			// Act
 			var result = await userRepository.GetUsers(0, 2);
@@ -285,8 +285,8 @@ public class UserRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var userRepository = new UserRepository();
-			var user = new User
+			var userRepository = new UserRepository(context);
+			var user = new UserDto
 			{
 				Id = Guid.NewGuid(),
 				Username = "test",
@@ -295,7 +295,7 @@ public class UserRepositoryTests
 
 			await userRepository.AddUserAsync(user);
 
-			var updatedUser = new User
+			var updatedUser = new UserDto
 			{
 				Id = user.Id,
 				Username = "test2",
@@ -323,8 +323,8 @@ public class UserRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var userRepository = new UserRepository();
-			var user = new User
+			var userRepository = new UserRepository(context);
+			var user = new UserDto
 			{
 				Id = Guid.NewGuid(),
 				Username = "test",
@@ -349,8 +349,8 @@ public class UserRepositoryTests
 
 		using (var context = new AppDbContext(options))
 		{
-			var userRepository = new UserRepository();
-			var user = new User
+			var userRepository = new UserRepository(context);
+			var user = new UserDto
 			{
 				Id = Guid.NewGuid(),
 				Username = "test",
