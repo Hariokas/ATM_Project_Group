@@ -9,6 +9,9 @@ public class AccountRepository(AppDbContext context) : IAccountRepository
 {
     public async Task<Account> AddAccountAsync(Account account)
     {
+        if (account is null)
+            throw new ArgumentNullException(nameof(account), "Account cannot be null");
+
         context.Accounts.Add(account);
         await context.SaveChangesAsync();
         return account;

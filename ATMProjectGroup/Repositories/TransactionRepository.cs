@@ -9,7 +9,8 @@ public class TransactionRepository(AppDbContext context) : ITransactionRepositor
 {
     public async Task<Transaction> AddTransactionAsync(Transaction transaction)
     {
-        context.Transactions.Add(transaction);
+		ArgumentNullException.ThrowIfNull(transaction, "Transaction cannot be null");
+		context.Transactions.Add(transaction);
         await context.SaveChangesAsync();
         return transaction;
     }
@@ -45,6 +46,11 @@ public class TransactionRepository(AppDbContext context) : ITransactionRepositor
         //existingTransaction.ToAccountId = transaction.ToAccountId;
         //existingTransaction.ToAccount = transaction.ToAccount;
         //existingTransaction.Type = transaction.Type;
+
+        if (existingTransaction == null)
+        {
+			return null;
+		}
 
         context.Transactions.Update(transaction);
         await context.SaveChangesAsync();
