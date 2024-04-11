@@ -26,17 +26,31 @@ public class AccountRepository(AppDbContext context) : IAccountRepository
 
     public async Task<Account> UpdateAccountAsync(Account account)
     {
-        context.Entry(account).State = EntityState.Modified;
-        await context.SaveChangesAsync();
-        return account;
+        var existingAccount = await GetAccountByIdAsync(account.Id);
+        if (existingAccount == null)
+        {
+            return null;
+        }
+        else
+        {
+            context.Entry(existingAccount).State = EntityState.Modified;
+            await context.SaveChangesAsync();
+            return existingAccount;
+        }
     }
 
     public async Task<Account> DeleteAccountAsync(Guid id)
     {
-        var account = await context.Accounts.FindAsync(id);
-        if (account != null) return null;
-        context.Accounts.Remove(account);
-        await context.SaveChangesAsync();
-        return account;
+        var account = await GetAccountByIdAsync(id);
+        if (account == null)
+        {
+            return null; 
+        }
+        else
+        {
+            context.Accounts.Remove(account);
+            await context.SaveChangesAsync();
+            return account;
+        }
     }
 }
